@@ -1,58 +1,1701 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coming Soon</title>
+    <title>BOMBALL™ | THE BALL THAT SAYS BOOM</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&family=Syne:wght@700;800&family=Unbounded:wght@600;900&display=swap" rel="stylesheet">
 
     <style>
-        * {
+        /* -------------------------------------------------------------------------- */
+        /* 1. DESIGN SYSTEM VARIABLES & TOKENS                                        */
+        /* -------------------------------------------------------------------------- */
+        :root {
+            --bg-base: #0d0d0c;
+            --bg-surface: #161615;
+            --bg-surface-elevated: #222220;
+            --text-primary: #fdfbf7;
+            --text-muted: #a1a1aa;
+            --brand-primary: #fff000;
+            --brand-secondary: #ff4e00;
+            --brand-accent: #ff007a;
+            --brand-brown: #2e1a12;
+            --brand-cream: #faf5ef;
+            
+            --font-display: 'Unbounded', system-ui, sans-serif;
+            --font-heading: 'Syne', system-ui, sans-serif;
+            --font-body: 'Space Grotesk', system-ui, sans-serif;
+            
+            --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition-snappy: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --container-padding: 5%;
+            --border-radius-lg: 24px;
+            --border-radius-md: 12px;
+            --z-index-nav: 100;
+            --z-index-drawer: 200;
+            --z-index-modal: 300;
+            --z-index-toast: 400;
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 2. BASE RESET & GLOBAL STYLES                                              */
+        /* -------------------------------------------------------------------------- */
+        *, *::before, *::after {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
         }
 
         body {
-            background: #0f0f0f;
-            color: white;
-            height: 100vh;
-            display: flex;
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        ::selection {
+            background-color: var(--brand-primary);
+            color: #000;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-base);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-surface-elevated);
+            border: 2px solid var(--bg-base);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--brand-secondary);
+        }
+
+        /* Utilities */
+        .glow-text {
+            text-shadow: 0 0 20px rgba(255, 240, 0, 0.4);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 3. HARDCORE COMPONENT TYPOGRAPHY & BUTTONS                                 */
+        /* -------------------------------------------------------------------------- */
+        h1, h2, h3, h4 {
+            font-family: var(--font-display);
+            text-transform: uppercase;
+            letter-spacing: -0.03em;
+        }
+
+        .btn-primary {
+            position: relative;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
+            padding: 18px 36px;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #000;
+            background-color: var(--brand-primary);
+            border: 3px solid #000;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            overflow: hidden;
+            transition: var(--transition-snappy);
+            box-shadow: 4px 4px 0px #000;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #000;
+            background-color: var(--text-primary);
+        }
+
+        .btn-primary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #000;
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 32px;
+            font-family: var(--font-body);
+            font-weight: 700;
+            color: var(--text-primary);
+            background: transparent;
+            border: 2px solid var(--bg-surface-elevated);
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: var(--transition-snappy);
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-surface);
+            border-color: var(--text-primary);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 4. AGE GATE / EXPLICIT CONTENT INTERACTION COVER                            */
+        /* -------------------------------------------------------------------------- */
+        .explicit-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+            transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .explicit-gate.dismissed {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .advisory-badge {
+            border: 6px solid var(--text-primary);
+            padding: 20px 40px;
+            font-family: var(--font-display);
+            margin-bottom: 40px;
+            max-width: 400px;
+        }
+
+        .advisory-badge h2 {
+            font-size: 2rem;
+            line-height: 1;
+        }
+
+        .advisory-badge p {
+            font-size: 0.8rem;
+            letter-spacing: 0.2em;
+            margin-top: 5px;
+        }
+
+        .gate-text {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            max-width: 700px;
+            margin-bottom: 40px;
+            line-height: 1.2;
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 5. NAVIGATION BAR STRUCTURE                                               */
+        /* -------------------------------------------------------------------------- */
+        .site-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--container-padding);
+            background: rgba(13, 13, 12, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            z-index: var(--z-index-nav);
+            transition: var(--transition-smooth);
+        }
+
+        .nav-scrolled {
+            height: 75px;
+            background: rgba(13, 13, 12, 0.95);
+        }
+
+        .brand-logo {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .brand-logo span {
+            color: var(--brand-primary);
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-link {
+            font-family: var(--font-body);
+            font-weight: 700;
+            color: var(--text-muted);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            transition: var(--transition-snappy);
+        }
+
+        .nav-link:hover {
+            color: var(--brand-primary);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .cart-trigger {
+            position: relative;
+            background: var(--bg-surface);
+            border: 1px solid var(--bg-surface-elevated);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-body);
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition-snappy);
+        }
+
+        .cart-trigger:hover {
+            border-color: var(--brand-primary);
+            background: var(--bg-surface-elevated);
+        }
+
+        .cart-count-badge {
+            background: var(--brand-secondary);
+            color: #fff;
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            min-width: 20px;
             text-align: center;
         }
 
-        .container {
-            padding: 40px;
+        /* -------------------------------------------------------------------------- */
+        /* 6. IMMERSIVE HERO PLATFORM                                                */
+        /* -------------------------------------------------------------------------- */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 140px var(--container-padding) 100px var(--container-padding);
+            background: radial-gradient(circle at 70% 30%, var(--brand-brown) 0%, var(--bg-base) 70%);
+            overflow: hidden;
         }
 
-        h1 {
-            font-size: clamp(3rem, 8vw, 6rem);
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .hero-text-block {
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-tagline {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(255, 78, 0, 0.1);
+            border: 1px solid rgba(255, 78, 0, 0.3);
+            color: var(--brand-secondary);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 6vw, 5.5rem);
+            line-height: 0.95;
+            margin-bottom: 30px;
+        }
+
+        .hero h1 .highlight {
+            color: transparent;
+            -webkit-text-stroke: 1.5px var(--text-primary);
+        }
+
+        .hero h1 .accent {
+            color: var(--brand-primary);
+            display: block;
+        }
+
+        .hero p.hero-desc {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 580px;
+            margin-bottom: 40px;
+        }
+
+        .hero-cta-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .hero-visual-block {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-image-frame {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--bg-surface) 0%, #1e110c 100%);
+            border: 2px solid var(--bg-surface-elevated);
+            border-radius: var(--border-radius-lg);
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+        }
+
+        .hero-image-frame img {
+            width: 110%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.7));
+            animation: floatingProduct 6s ease-in-out infinite;
+        }
+
+        @keyframes floatingProduct {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 7. INFINITE BRAND MOTION TICKER                                           */
+        /* -------------------------------------------------------------------------- */
+        .ticker-wrap {
+            width: 100%;
+            background: var(--brand-secondary);
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 20px 0;
+            border-top: 4px solid #000;
+            border-bottom: 4px solid #000;
+            box-shadow: 0 10px 30px rgba(255, 78, 0, 0.2);
+        }
+
+        .ticker-track {
+            display: inline-block;
+            animation: marquee 25s linear infinite;
+        }
+
+        .ticker-item {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #000;
+            text-transform: uppercase;
+            margin-right: 60px;
+        }
+
+        @keyframes marquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 8. MANIFESTO & BRAND PROSE                                               */
+        /* -------------------------------------------------------------------------- */
+        .manifesto {
+            padding: 140px var(--container-padding);
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .manifesto-grid {
+            display: grid;
+            grid-template-columns: 0.8fr 1.2fr;
+            gap: 80px;
+            align-items: start;
+        }
+
+        .manifesto h2 {
+            font-size: 2.5rem;
+            line-height: 1.1;
+            position: sticky;
+            top: 130px;
+        }
+
+        .manifesto-body p {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1.3;
+            color: var(--text-primary);
+            margin-bottom: 40px;
+        }
+
+        .manifesto-body p span {
+            color: var(--brand-accent);
+        }
+
+        .manifesto-body .sub-narrative {
+            font-family: var(--font-body);
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 9. PREMIUM MATRIX PRODUCT DISPLAY ARCHITECTURE                            */
+        /* -------------------------------------------------------------------------- */
+        .showcase {
+            padding: 120px var(--container-padding);
+            background-color: var(--bg-surface);
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .section-header {
+            max-width: 800px;
+            margin: 0 auto 80px auto;
+            text-align: center;
+        }
+
+        .section-header h2 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background-color: var(--bg-base);
+            border: 2px solid var(--bg-surface-elevated);
+            border-radius: var(--border-radius-lg);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--brand-primary);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        }
+
+        .badge-layer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            z-index: 5;
+        }
+
+        .pack-badge {
+            background: var(--brand-brown);
+            color: var(--brand-cream);
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            padding: 6px 14px;
+            border-radius: 6px;
+        }
+
+        .flavor-badge {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            background: #fff;
+            color: #000;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-weight: 900;
+        }
+
+        .product-card-visual {
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            position: relative;
+            background: radial-gradient(circle, rgba(255,255,255,0.02) 0%, transparent 70%);
+            border-radius: var(--border-radius-md);
+        }
+
+        /* Frame architecture for transparent PNG integration */
+        .product-card-visual img {
+            max-height: 100%;
+            width: auto;
+            object-fit: contain;
+            transition: var(--transition-smooth);
+            filter: drop-shadow(0 15px 25px rgba(0,0,0,0.5));
+        }
+
+        .product-card:hover .product-card-visual img {
+            transform: scale(1.08) rotate(-2deg);
+        }
+
+        .product-card-meta {
+            margin-top: auto;
+        }
+
+        .product-card h3 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .product-card p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 30px;
+            min-height: 48px;
+        }
+
+        .product-purchase-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-top: 1px solid var(--bg-surface-elevated);
+            padding-top: 24px;
+        }
+
+        .product-price {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--text-primary);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 10. ETHICS / BRAND VIBE SHOWCASE BLOCK                                    */
+        /* -------------------------------------------------------------------------- */
+        .ethics-banner {
+            background-color: var(--brand-primary);
+            color: #000;
+            padding: 120px var(--container-padding);
+            text-align: center;
+            position: relative;
+        }
+
+        .ethics-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .ethics-banner h2 {
+            font-size: clamp(2rem, 4vw, 4.5rem);
+            line-height: 1;
+            margin-bottom: 40px;
+        }
+
+        .ethics-tag {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            background-color: #000;
+            color: #fff;
+            display: inline-block;
+            padding: 10px 20px;
+            margin-bottom: 30px;
+            transform: rotate(-2deg);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 11. INTERACTIVE LAB: INGREDIENTS INTERACTION MODULE                       */
+        /* -------------------------------------------------------------------------- */
+        .laboratory {
+            padding: 120px var(--container-padding);
+            background: #000;
+        }
+
+        .lab-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .lab-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .lab-interactive-zone {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .ingredient-chip {
+            background: var(--bg-surface);
+            border: 1px solid var(--bg-surface-elevated);
+            color: var(--text-primary);
+            padding: 12px 20px;
+            border-radius: 100px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: var(--transition-snappy);
+        }
+
+        .ingredient-chip:hover {
+            border-color: var(--brand-secondary);
+            background: rgba(255, 78, 0, 0.05);
+        }
+
+        .ingredient-chip.active {
+            background: var(--brand-secondary);
+            color: #fff;
+            border-color: var(--brand-secondary);
+            font-weight: 700;
+            box-shadow: 0 10px 20px rgba(255, 78, 0, 0.3);
+        }
+
+        .lab-monitor {
+            background: var(--bg-surface);
+            border: 2px solid var(--bg-surface-elevated);
+            border-radius: var(--border-radius-lg);
+            padding: 50px;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .monitor-label {
+            font-family: var(--font-display);
+            font-size: 0.75rem;
+            color: var(--brand-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+        }
+
+        .monitor-title {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .monitor-desc {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 12. RUNTIME CART DRAWER SYSTEM UI SECTION                                 */
+        /* -------------------------------------------------------------------------- */
+        .cart-drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            z-index: var(--z-index-drawer);
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+        }
+
+        .cart-drawer-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 100%;
+            max-width: 500px;
+            height: 100vh;
+            background: var(--bg-surface);
+            box-shadow: -20px 0 60px rgba(0,0,0,0.8);
+            z-index: calc(var(--z-index-drawer) + 1);
+            transform: translateX(100%);
+            transition: var(--transition-smooth);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-drawer.active {
+            transform: translateX(0);
+        }
+
+        .cart-header {
+            padding: 30px;
+            border-bottom: 1px solid var(--bg-surface-elevated);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition-snappy);
+        }
+
+        .cart-close-btn:hover {
+            background: var(--bg-surface-elevated);
+        }
+
+        .cart-items-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .cart-empty-state {
+            text-align: center;
+            margin: auto;
+            color: var(--text-muted);
+        }
+
+        .cart-empty-state p {
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 20px;
+            align-items: center;
+            background: var(--bg-base);
+            padding: 16px;
+            border-radius: var(--border-radius-md);
+            border: 1px solid var(--bg-surface-elevated);
+        }
+
+        .cart-item-img-frame {
+            width: 80px;
+            height: 80px;
+            background: var(--bg-surface);
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-item-img-frame img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .cart-item-info h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+        }
+
+        .cart-item-info p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
             margin-bottom: 10px;
         }
 
-        p {
+        .quantity-controller {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--bg-surface);
+            padding: 4px 8px;
+            border-radius: 6px;
+            width: fit-content;
+        }
+
+        .qty-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            width: 24px;
+            height: 24px;
+        }
+
+        .qty-val {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .cart-item-actions {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .item-total-price {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .remove-item-btn {
+            background: transparent;
+            border: none;
+            color: var(--brand-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .cart-footer {
+            padding: 30px;
+            border-top: 1px solid var(--bg-surface-elevated);
+            background: var(--bg-base);
+        }
+
+        .promo-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .promo-input {
+            flex: 1;
+            background: var(--bg-surface);
+            border: 1px solid var(--bg-surface-elevated);
+            border-radius: var(--border-radius-md);
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+        }
+
+        .promo-input:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+        }
+
+        .promo-btn {
+            background: var(--bg-surface-elevated);
+            border: none;
+            color: var(--text-primary);
+            padding: 0 20px;
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-body);
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition-snappy);
+        }
+
+        .promo-btn:hover {
+            background: var(--text-primary);
+            color: #000;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+        }
+
+        .summary-row.grand-total {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--bg-surface-elevated);
+        }
+
+        .checkout-btn {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 13. TOAST NOTIFICATION UTILITY                                            */
+        /* -------------------------------------------------------------------------- */
+        .toast-container {
+            position: fixed;
+            bottom: 40px;
+            left: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: var(--z-index-toast);
+        }
+
+        .toast {
+            background: #fff;
+            color: #000;
+            padding: 16px 28px;
+            border-radius: var(--border-radius-md);
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateY(100px);
+            opacity: 0;
+            animation: toastIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes toastIn {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 14. PRODUCT QUICK VIEW MODAL COMPONENT                                    */
+        /* -------------------------------------------------------------------------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            z-index: var(--z-index-modal);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-container {
+            background: var(--bg-surface);
+            width: 100%;
+            max-width: 900px;
+            border-radius: var(--border-radius-lg);
+            border: 2px solid var(--bg-surface-elevated);
+            overflow: hidden;
+            position: relative;
+            transform: scale(0.9) translateY(30px);
+            transition: var(--transition-smooth);
+        }
+
+        .modal-overlay.active .modal-container {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: var(--bg-base);
+            border: 1px solid var(--bg-surface-elevated);
+            color: #fff;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            cursor: pointer;
             font-size: 1.2rem;
-            color: #aaa;
+            z-index: 10;
         }
 
-        .dot {
-            display: inline-block;
-            animation: blink 1.5s infinite;
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
         }
 
-        @keyframes blink {
-            50% {
-                opacity: 0.3;
-            }
+        .modal-visual {
+            background: linear-gradient(135deg, var(--bg-base) 0%, var(--brand-brown) 100%);
+            padding: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-visual img {
+            max-width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.6));
+        }
+
+        .modal-content {
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .modal-content h3 {
+            font-size: 2.2rem;
+            margin-bottom: 16px;
+        }
+
+        .modal-content .modal-desc {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 15. HIGH-END FOOTER ARCHITECTURE                                          */
+        /* -------------------------------------------------------------------------- */
+        .site-footer {
+            background-color: var(--bg-surface);
+            border-top: 1px solid var(--bg-surface-elevated);
+            padding: 100px var(--container-padding) 40px var(--container-padding);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 60px;
+            max-width: 1400px;
+            margin: 0 auto 80px auto;
+        }
+
+        .footer-brand-column h3 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .footer-brand-column p {
+            color: var(--text-muted);
+            max-width: 320px;
+        }
+
+        .footer-heading {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            color: var(--brand-secondary);
+            margin-bottom: 24px;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .footer-link a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition-snappy);
+        }
+
+        .footer-link a:hover {
+            color: var(--text-primary);
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            border-top: 1px solid var(--bg-surface-elevated);
+            padding-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* 16. RESPONSIVE BREAKPOINTS ENGINE                                         */
+        /* -------------------------------------------------------------------------- */
+        @media (max-width: 1100px) {
+            .hero-grid { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+            .hero-cta-group { justify-content: center; }
+            .hero p.hero-desc { margin-left: auto; margin-right: auto; }
+            .manifesto-grid { grid-template-columns: 1fr; gap: 40px; }
+            .manifesto h2 { position: relative; top: 0; }
+            .lab-layout { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu { display: none; }
+            .section-header h2 { font-size: 2.5rem; }
+            .product-grid { grid-template-columns: 1fr; }
+            .modal-grid { grid-template-columns: 1fr; }
+            .modal-visual { padding: 40px; }
+            .modal-content { padding: 30px; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Coming Soon<span class="dot">.</span></h1>
-        <p>Something awesome is on the way.</p>
+
+    <div class="explicit-gate" id="explicitGate">
+        <div class="advisory-badge">
+            <h2>PARENTAL ADVISORY</h2>
+            <p>EXPLICIT CONTENT</p>
+        </div>
+        <div class="gate-text">WARNING: The following chocolate brand is highly volatile, contains popping candy, and breaks multiple rules of conventional candy.</div>
+        <button class="btn-primary" onclick="dismissGate()">I Am Ready For The Boom</button>
     </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <nav class="site-nav" id="siteNav">
+        <a href="#" class="brand-logo">BOMBALL<span>™</span></a>
+        <ul class="nav-menu">
+            <li><a href="#manifesto" class="nav-link">The Truth</a></li>
+            <li><a href="#showcase" class="nav-link">Products</a></li>
+            <li><a href="#lab" class="nav-link">Formula</a></li>
+        </ul>
+        <div class="nav-actions">
+            <button class="cart-trigger" onclick="toggleCart(true)">
+                <span>CART</span>
+                <span class="cart-count-badge" id="cartCount">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Im like rlly sorry for the person seeing this, its just to have a cool effect -->
+    <header class="hero">
+        <div class="hero-grid">
+            <div class="hero-text-block">
+                <div class="hero-tagline"> WARNING: HIGHLY ADDICTIVE                         </div>
+                <h1>THE BALL THAT SAYS <span class="accent">BOOM!</span></h1>
+                <p class="hero-desc">A perfect sphere chocolate ball packed with an intense, melting-in-your-mouth structural core of premium popping candy.</p>
+                <div class="hero-cta-group">
+                    <a href="#showcase" class="btn-primary">Grab a Bag</a>
+                    <a href="#manifesto" class="btn-secondary">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-visual-block">
+                <div class="hero-image-frame">
+                    <img src="Bomball Dark.png" alt="Bomball Original Packaging Black">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="ticker-wrap">
+        <div class="ticker-track">
+            <div class="ticker-item">POP! CRACKLE! BOOM!</div>
+            <div class="ticker-item">★ NET WT. 300g SHARE SIZE</div>
+            <div class="ticker-item">POP! CRACKLE! BOOM!</div>
+            <div class="ticker-item">★ QUANTUM PRESERVATIVES ENCLOSED</div>
+            <div class="ticker-item">POP! CRACKLE! BOOM!</div>
+            <div class="ticker-item">★ ALTERNATIVE FOR MALTEZERS HATERS</div>
+            <div class="ticker-item">POP! CRACKLE! BOOM!</div>
+            <div class="ticker-item">★ NET WT. 300g SHARE SIZE</div>
+            <div class="ticker-item">POP! CRACKLE! BOOM!</div>
+            <div class="ticker-item">★ QUANTUM PRESERVATIVES ENCLOSED</div>
+            <div class="ticker-item">POP! CRACKLE! BOOM!</div>
+            <div class="ticker-item">★ ALTERNATIVE FOR MALTEZERS HATERS</div>
+        </div>
+    </div>
+
+    <section class="manifesto" id="manifesto">
+        <div class="manifesto-grid">
+            <h2>WHAT IS BOMBALL?</h2>
+            <div class="manifesto-body">
+                <p>"It's kinda when a <span>toddler makes random potions in the bathroom...</span> it makes no sense, but it's absolutely amazing!"</p>
+                <div class="sub-narrative">
+                    Who likes chocolate? You! And who hates Maltezers? Also you! We created the ultimate fix. We got special people to try our chocolate formulations and they all mutually agreed that it's highly edible. Expect a full sensory explosion wrapped in absolute luxury chocolate.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="showcase" id="showcase">
+        <div class="section-header">
+            <h2>CHOOSE YOUR EXPLOSIVE</h2>
+            <p>Available in huge 300g share bags. Engineered for maximum crackle capacity.</p>
+        </div>
+        <div class="product-grid" id="productGridContainer">
+            </div>
+    </section>
+
+    <section class="ethics-banner">
+        <div class="ethics-container">
+            <div class="ethics-tag">TRUE ETHICAL VIBES ONLY</div>
+            <h2>"At Bomball™ we think that equality is right, so we pay all of our farmers a good wage because we want people to think we're nice and cool and chill."</h2>
+        </div>
+    </section>
+
+    <section class="laboratory" id="lab">
+        <div class="lab-container">
+            <div class="section-header">
+                <h2>THE FORMULA LAB</h2>
+                <p>Click components below to decode the structural anatomy of the Bomball™ recipe matrix.</p>
+            </div>
+            <div class="lab-layout">
+                <div class="lab-interactive-zone" id="ingredientsMatrix">
+                    </div>
+                <div class="lab-monitor">
+                    <div class="monitor-label">Quantum Terminal</div>
+                    <div class="monitor-title" id="monitorTitle">Select Ingredient</div>
+                    <div class="monitor-desc" id="monitorDesc">Click an ingredient button on the left panel to scan its molecular stability profile and chemical origin spectrum.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="cart-drawer-overlay" id="cartOverlay" onclick="toggleCart(false)"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-header">
+            <h3>YOUR AMMUNITION</h3>
+            <button class="cart-close-btn" onclick="toggleCart(false)">&times;</button>
+        </div>
+        <div class="cart-items-container" id="cartItemsContainer">
+            </div>
+        <div class="cart-footer">
+            <div class="promo-row">
+                <input type="text" class="promo-input" id="promoInput" placeholder="ENTER PROMO CODE">
+                <button class="promo-btn" onclick="applyDiscount()">APPLY</button>
+            </div>
+            <div class="summary-row">
+                <span>Subtotal</span>
+                <span id="subtotalVal">$0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Discount Code</span>
+                <span id="discountVal">-$0.00</span>
+            </div>
+            <div class="summary-row grand-total">
+                <span>TOTAL</span>
+                <span id="grandTotalVal">$0.00</span>
+            </div>
+            <button class="btn-primary checkout-btn" onclick="executeSimulatedCheckout()">PROCEED TO CHECKOUT</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="productModal" onclick="closeProductModal(event)">
+        <div class="modal-container">
+            <button class="modal-close" onclick="forceCloseModal()">&times;</button>
+            <div class="modal-grid" id="modalGridContent">
+                </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <div class="footer-grid">
+            <div class="footer-brand-column">
+                <h3>BOMBALL™</h3>
+                <p>Changing the architectural landscape of premium popping chocolate candy globally.</p>
+            </div>
+            <div>
+                <div class="footer-heading">NAVIGATION</div>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="#manifesto">The Mission</a></li>
+                    <li class="footer-link"><a href="#showcase">Shop Bags</a></li>
+                    <li class="footer-link"><a href="#lab">The Ingredients Matrix</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="footer-heading">COMPLIANCE</div>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="#">Parental Disclaimer</a></li>
+                    <li class="footer-link"><a href="#">Farmer Equity Framework</a></li>
+                    <li class="footer-link"><a href="#">Quantum Testing Metrics</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="footer-heading">LEGAL CODE</div>
+                <ul class="footer-links">
+                    <li class="footer-link"><a href="#">Terms & Explosions</a></li>
+                    <li class="footer-link"><a href="#">Privacy Protocols</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>&copy; 2026 BOMBALL™ INDUSTRIES CO. ALL RIGHTS RESERVED.</div>
+            <div>Made by AI (And Noah) </div>
+        </div>
+    </footer>
+
+    <script>
+        // 1. Data Store Definition
+        const BOMBALL_PRODUCTS = [
+            {
+                id: "bomball-original",
+                title: "OUR ORIGINAL",
+                flavor: "MILK CHOCOLATE",
+                desc: "Crispy premium milk chocolate shell with volatile high-performance popping candy hidden inside! POP! CRACKLE! BOOM!",
+                price: 12.31,
+                weight: "300g e",
+                tag: "POP! CRACKLE! BOOM!",
+                image: "Bomball Dark.png"
+            },
+            {
+                id: "bomball-white",
+                title: "OUR WHITE",
+                flavor: "CRISPY WHITE",
+                desc: "Rich buttery white chocolate shell layered around a compressed dense core of active micro popping elements.",
+                price: 12.31,
+                weight: "300g e",
+                tag: "POP! CRACKLE! BOOM!",
+                image: "Bomball White.png"
+            }
+        ];
+
+        const LAB_INGREDIENTS = [
+            { name: "Sugar", type: "Base", desc: "Pure high-grade crystalline sucrose structural sweetener modules." },
+            { name: "Cocoa Mass", type: "Base", desc: "Milled pure solid cocoa paste block extract for luxury texture foundation." },
+            { name: "Uncombined Sulfure Oxidation™", type: "Quantum", desc: "Our classified molecular synthesis formulation used to create high-impact explosive flavor shifts inside the candy." },
+            { name: "Trace Quantum Preservatives", type: "Quantum", desc: "Microscopic chronologically stable agents ensuring optimal freshness without breaking thermodynamic laws." },
+            { name: "Soy Lecithin", type: "Emulsifier", desc: "Natural extraction binder used to achieve highly uniform lipid-to-sugar matrix encapsulation." },
+            { name: "Phase-Shifted Cocoa Extract™", type: "Quantum", desc: "Cocoa molecules run through specialized custom thermal pressure loops to enhance taste acceleration profiles." },
+            { name: "Stabilised Theobromine Matrix", type: "Base", desc: "Alkaloid isolation design configuration tuned for elevating clean flavor energy output." },
+            { name: "Sea Salt", type: "Accent", desc: "Harvested hyper-sodium crystal fragments for balance modulation." }
+        ];
+
+        // 2. State Controller Object
+        let appState = {
+            cart: [],
+            appliedDiscount: 0,
+            activePromoCode: ""
+        };
+
+        // 3. Application Initialization
+        document.addEventListener("DOMContentLoaded", () => {
+            loadPersistedCart();
+            renderProductGrid();
+            renderIngredientsLab();
+            initScrollEffects();
+        });
+
+        // 4. Age Gate System Controller
+        function dismissGate() {
+            const gate = document.getElementById("explicitGate");
+            gate.classList.add("dismissed");
+            showToast("System initialization complete. Welcome.");
+        }
+
+        // 5. Scroll Management Controller
+        function initScrollEffects() {
+            const nav = document.getElementById("siteNav");
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 50) {
+                    nav.classList.add("nav-scrolled");
+                } else {
+                    nav.classList.remove("nav-scrolled");
+                }
+            });
+        }
+
+        // 6. UI Product Render Grid Execution
+        function renderProductGrid() {
+            const container = document.getElementById("productGridContainer");
+            container.innerHTML = BOMBALL_PRODUCTS.map(prod => `
+                <div class="product-card">
+                    <div class="badge-layer">
+                        <span class="pack-badge">${prod.weight}</span>
+                        <span class="flavor-badge">${prod.flavor}</span>
+                    </div>
+                    <div class="product-card-visual" onclick="openProductQuickView('${prod.id}')" style="cursor: pointer;">
+                        <img src="${prod.image}" alt="${prod.title}">
+                    </div>
+                    <div class="product-card-meta">
+                        <h3>${prod.title}</h3>
+                        <p>${prod.desc}</p>
+                        <div class="product-purchase-row">
+                            <span class="product-price">$${prod.price.toFixed(2)}</span>
+                            <button class="btn-primary" onclick="addItemToCartEngine('${prod.id}')">ADD TO CART</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 7. Interactive Lab Engine Configuration
+        function renderIngredientsLab() {
+            const container = document.getElementById("ingredientsMatrix");
+            container.innerHTML = LAB_INGREDIENTS.map((ing, index) => `
+                <button class="ingredient-chip" id="ing-chip-${index}" onclick="inspectIngredient(${index})">
+                    ${ing.name}
+                </button>
+            `).join('');
+        }
+
+        function inspectIngredient(index) {
+            document.querySelectorAll('.ingredient-chip').forEach(el => el.classList.remove('active'));
+            document.getElementById(`ing-chip-${index}`).classList.add('active');
+            
+            const target = LAB_INGREDIENTS[index];
+            document.getElementById("monitorTitle").innerText = target.name;
+            document.getElementById("monitorDesc").innerText = `[CLASSIFICATION: ${target.type.toUpperCase()}] — ${target.desc}`;
+        }
+
+        // 8. Core Cart Engine State Controllers
+        function toggleCart(openState) {
+            const drawer = document.getElementById("cartDrawer");
+            const overlay = document.getElementById("cartOverlay");
+            if (openState) {
+                drawer.classList.add("active");
+                overlay.classList.add("active");
+            } else {
+                drawer.classList.remove("active");
+                overlay.classList.remove("active");
+            }
+        }
+
+        function addItemToCartEngine(productId) {
+            const productMatch = BOMBALL_PRODUCTS.find(p => p.id === productId);
+            if (!productMatch) return;
+
+            const existingCartItem = appState.cart.find(item => item.id === productId);
+            if (existingCartItem) {
+                existingCartItem.quantity += 1;
+            } else {
+                appState.cart.push({
+                    id: productMatch.id,
+                    title: productMatch.title,
+                    price: productMatch.price,
+                    image: productMatch.image,
+                    flavor: productMatch.flavor,
+                    quantity: 1
+                });
+            }
+
+            syncCartState();
+            showToast(`Added ${productMatch.title} to ammunition matrix.`);
+        }
+
+        function changeQuantity(productId, delta) {
+            const targetItem = appState.cart.find(item => item.id === productId);
+            if (!targetItem) return;
+
+            targetItem.quantity += delta;
+            if (targetItem.quantity <= 0) {
+                appState.cart = appState.cart.filter(item => item.id !== productId);
+            }
+
+            syncCartState();
+        }
+
+        function removeCartItemDirect(productId) {
+            appState.cart = appState.cart.filter(item => item.id !== productId);
+            syncCartState();
+            showToast("Item purged from cart.");
+        }
+
+        function applyDiscount() {
+            const promo = document.getElementById("promoInput").value.trim().toUpperCase();
+            if (promo === "BOOM20") {
+                appState.appliedDiscount = 0.20; // 20% Off
+                appState.activePromoCode = "BOOM20";
+                showToast("Promo Code 'BOOM20' Applied: 20% Off Discount Activated.");
+            } else if (promo === "NICEANDCOOL") {
+                appState.appliedDiscount = 0.50; // 50% Off
+                appState.activePromoCode = "NICEANDCOOL";
+                showToast("Farmer Vibe Discount 'NICEANDCOOL' Applied: 50% Off.");
+            } else {
+                showToast("Invalid quantum security encryption key code.");
+            }
+            syncCartState();
+        }
+
+        function syncCartState() {
+            // Update counts
+            const totalCount = appState.cart.reduce((acc, item) => acc + item.quantity, 0);
+            document.getElementById("cartCount").innerText = totalCount;
+
+            // Render items layout
+            const container = document.getElementById("cartItemsContainer");
+            if (appState.cart.length === 0) {
+                container.innerHTML = `
+                    <div class="cart-empty-state">
+                        <h3>Cart Disarmed</h3>
+                        <p>No high explosives loaded into selection grid.</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = appState.cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-img-frame">
+                            <img src="${item.image}" alt="${item.title}">
+                        </div>
+                        <div class="cart-item-info">
+                            <h4>${item.title}</h4>
+                            <p>${item.flavor}</p>
+                            <div class="quantity-controller">
+                                <button class="qty-btn" onclick="changeQuantity('${item.id}', -1)">-</button>
+                                <span class="qty-val">${item.quantity}</span>
+                                <button class="qty-btn" onclick="changeQuantity('${item.id}', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <span class="item-total-price">$${(item.price * item.quantity).toFixed(2)}</span>
+                            <button class="remove-item-btn" onclick="removeCartItemDirect('${item.id}')">Purge</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Calculation Metrics
+            const subtotal = appState.cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            const discountAmt = subtotal * appState.appliedDiscount;
+            const grandTotal = subtotal - discountAmt;
+
+            document.getElementById("subtotalVal").innerText = `$${subtotal.toFixed(2)}`;
+            document.getElementById("discountVal").innerText = `-$${discountAmt.toFixed(2)}`;
+            document.getElementById("grandTotalVal").innerText = `$${grandTotal.toFixed(2)}`;
+
+            // Persist
+            localStorage.setItem("bomball_cart_state", JSON.stringify(appState.cart));
+        }
+
+        function loadPersistedCart() {
+            try {
+                const stored = localStorage.getItem("bomball_cart_state");
+                if (stored) {
+                    appState.cart = JSON.parse(stored);
+                    syncCartState();
+                }
+            } catch (e) {
+                console.error("Cart state loading failure context: ", e);
+            }
+        }
+
+        // 9. Toast System Architecture
+        function showToast(msg) {
+            const container = document.getElementById("toastContainer");
+            const toast = document.createElement("div");
+            toast.className = "toast";
+            toast.innerHTML = `<span>⚡</span> <span>${msg}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = "none"; // Clear animation layer
+                toast.remove();
+            }, 3500);
+        }
+
+        // 10. Deep Dive Modal View System
+        function openProductQuickView(productId) {
+            const target = BOMBALL_PRODUCTS.find(p => p.id === productId);
+            if (!target) return;
+
+            const gridContent = document.getElementById("modalGridContent");
+            gridContent.innerHTML = `
+                <div class="modal-visual">
+                    <img src="${target.image}" alt="${target.title}">
+                </div>
+                <div class="modal-content">
+                    <h3>${target.title}</h3>
+                    <div style="font-family: var(--font-display); color: var(--brand-secondary); margin-bottom: 10px;">${target.flavor} / ${target.weight}</div>
+                    <p class="modal-desc">${target.desc} Crafted under full pressure compliance vectors to ensure perfect spherical balance profile configurations.</p>
+                    <div style="font-family: var(--font-display); font-size: 2rem; font-weight:900; margin-bottom:24px;">$${target.price.toFixed(2)}</div>
+                    <button class="btn-primary" onclick="addItemToCartEngine('${target.id}'); forceCloseModal();">LOAD INTO CART</button>
+                </div>
+            `;
+
+            document.getElementById("productModal").classList.add("active");
+        }
+
+        function forceCloseModal() {
+            document.getElementById("productModal").classList.remove("active");
+        }
+
+        function closeProductModal(event) {
+            if (event.target === document.getElementById("productModal")) {
+                forceCloseModal();
+            }
+        }
+
+        // 11. Simulated E-Commerce Checkout Engine Execution
+        function executeSimulatedCheckout() {
+            if (appState.cart.length === 0) {
+                showToast("Cannot initialize checkout pipeline with empty payload array.");
+                return;
+            }
+            showToast("Connecting to secure decentralized payment gateways...");
+            setTimeout(() => {
+                showToast("Simulating explosive processing algorithms... BOOM!");
+                setTimeout(() => {
+                    showToast("Order simulated successfully. Your candy is authorized.");
+                    appState.cart = [];
+                    syncCartState();
+                    toggleCart(false);
+                }, 1500);
+            }, 1500);
+        }
+    </script>
 </body>
 </html>
