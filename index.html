@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,7 +22,7 @@ body{
     justify-content:center;
     align-items:center;
     text-align:center;
-    overflow:hidden;
+    overflow-x:hidden;
 }
 
 .background{
@@ -29,9 +30,9 @@ body{
     inset:0;
     background:
         radial-gradient(circle at center,
-        rgba(255,120,0,.15) 0%,
-        transparent 50%);
-    animation:pulse 6s ease-in-out infinite;
+        rgba(255,120,0,.12) 0%,
+        transparent 60%);
+    animation:pulse 8s ease-in-out infinite;
 }
 
 .container{
@@ -42,9 +43,17 @@ body{
 }
 
 .logo{
-    font-size:clamp(4rem,10vw,8rem);
-    margin-bottom:20px;
-    filter:drop-shadow(0 0 40px rgba(255,120,0,.4));
+    margin-bottom:30px;
+}
+
+.logo img{
+    width:min(320px, 80vw);
+    height:auto;
+    display:block;
+    margin:0 auto;
+    filter:
+        drop-shadow(0 0 20px rgba(255,120,0,.25))
+        drop-shadow(0 0 60px rgba(255,120,0,.15));
     animation:float 4s ease-in-out infinite;
 }
 
@@ -102,7 +111,11 @@ h1{
 <div class="background"></div>
 
 <div class="container">
-    <div class="logo fade-in">🌶️</div>
+
+    <!-- Put your transparent logo file in the same folder as this HTML -->
+    <div class="logo fade-in">
+        <img src="logo.png" alt="Bomball Logo">
+    </div>
 
     <h1 class="fade-in">
         Thanks For Trying Bomball
@@ -113,19 +126,24 @@ h1{
     </p>
 
     <div class="message fade-in">
+        Bomball has officially come to an end.
         <br><br>
-        Whether you bought one pack or many, thank you for
-        being part of the journey.
+        Thank you to everyone who tried a pack, shared it with friends,
+        and supported the brand.
         <br><br>
-        While Bomball is no longer being produced,
-        the support, feedback, and memories will always
-        mean the world to us.
+        What started as a simple idea became a real product, and we're
+        grateful to everyone who was part of that journey.
+        <br><br>
+        While Bomball is no longer being produced, the memories and
+        support will always remain.
     </div>
 
     <div class="footer fade-in">
-        Bomball • 2026–2026
+        Bomball • 2026
     </div>
+
 </div>
 
 </body>
 </html>
+```
