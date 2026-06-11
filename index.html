@@ -1,1 +1,131 @@
-its done
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bomball</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:#000;
+    color:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    overflow:hidden;
+}
+
+.background{
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at center,
+        rgba(255,120,0,.15) 0%,
+        transparent 50%);
+    animation:pulse 6s ease-in-out infinite;
+}
+
+.container{
+    max-width:800px;
+    padding:40px;
+    position:relative;
+    z-index:2;
+}
+
+.logo{
+    font-size:clamp(4rem,10vw,8rem);
+    margin-bottom:20px;
+    filter:drop-shadow(0 0 40px rgba(255,120,0,.4));
+    animation:float 4s ease-in-out infinite;
+}
+
+h1{
+    font-size:clamp(2.5rem,6vw,5rem);
+    font-weight:700;
+    letter-spacing:-3px;
+    margin-bottom:20px;
+}
+
+.subtitle{
+    font-size:1.3rem;
+    color:#999;
+    margin-bottom:40px;
+}
+
+.message{
+    font-size:1.15rem;
+    line-height:1.8;
+    color:#cfcfcf;
+}
+
+.footer{
+    margin-top:50px;
+    color:#666;
+    font-size:.95rem;
+}
+
+@keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-10px);}
+}
+
+@keyframes pulse{
+    0%,100%{opacity:.5;}
+    50%{opacity:1;}
+}
+
+.fade-in{
+    opacity:0;
+    transform:translateY(20px);
+    animation:fadeIn 1.2s forwards;
+}
+
+@keyframes fadeIn{
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="background"></div>
+
+<div class="container">
+    <div class="logo fade-in">🌶️</div>
+
+    <h1 class="fade-in">
+        Thanks For Trying Bomball
+    </h1>
+
+    <p class="subtitle fade-in">
+        Bomball has officially been discontinued.
+    </p>
+
+    <div class="message fade-in">
+        <br><br>
+        Whether you bought one pack or many, thank you for
+        being part of the journey.
+        <br><br>
+        While Bomball is no longer being produced,
+        the support, feedback, and memories will always
+        mean the world to us.
+    </div>
+
+    <div class="footer fade-in">
+        Bomball • 2026–2026
+    </div>
+</div>
+
+</body>
+</html>
